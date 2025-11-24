@@ -1,6 +1,6 @@
 import { ApolloServer } from "apollo-server";
-import typeDefs from "./Schemas/typeDefs.js";
-import resolvers from "./Schemas/resolvers.js";
+import typeDefs from "./Schemas/typeDefs";
+import resolvers from "./Schemas/resolvers";
 
 const server = new ApolloServer({
   typeDefs,
