@@ -1,73 +1,53 @@
-# React + TypeScript + Vite
+i will write here how to use GraphQL's tools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+if we want to make mutation we need to make query in (gql``)
+for example we fetching all user its means we dont need any args we can do like this
 
-Currently, two official plugins are available:
+create variable called GET_ALL_USERS its will be better if name will be meaningfull and capitalized
+invariable we will save gql object and make query named as on the server its look like endpoints, next step we must to write keyword query because we geting data from server in other hands we have to write mutation i will explein it next,
+after query we must to write object name where we will write which fields want to fetch. in my case it is like this, in object we must to write query name from server on my server it is users and here i can write fields which i want to get from users data
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+const GET_ALL_USERS = gql` 
+ query ALL_USERS {
+    users {
+      id
+      name
+      age
+      email
+      nationality
+    }
+  }`;
 
-## React Compiler
+how to use it?
+in component where we want to fetch all user importing useQuery hook from appolo/client and creating variable which equals useQuery hook and passing
+previous variable(GET_ALL_USERS) as argument
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+const {} = useQuery(GET_ALL_USERS)
 
-## Expanding the ESLint configuration
+its returning {data,error,loading} we can use it as rendering conditions
+finnaly it look like this
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+const {data,error,loading} = useQuery(GET_ALL_USERS)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## if we log the data we will see users object with list of users
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+if we decide to get one user by id or name
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+we have to write query and pass arguments in my case is fetched by id
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+export const SPECIAL_USERS = gql`  query getUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      name
+      age
+      email
+    }
+  }`;
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+$id symbol tells GraphQL that the value will be provided later from our client-side code. in React, we simply call the query and pass the variable
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+getUser({
+variables: { id: userId },
+});
+
+This makes our query flexible, reusable, and type-safe. GraphQL takes the provided id and returns exactly the user that matches it.
