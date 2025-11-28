@@ -2,13 +2,14 @@ import { gql } from "apollo-server";
 
 const typeDefs = gql`
   type User {
-    id: ID
+    _id: ID
     name: String!
     email: String!
     age: Int
     isActive: Boolean!
     nationality: String
     friends: [User!]
+    friendsRequest: [User!]
     posts: [Post!]
   }
 
@@ -22,7 +23,7 @@ const typeDefs = gql`
     hello: String
     goodBye: String
     users: [User!]!
-    getUser(id: ID!): User!
+    getUser(_id: ID!): User!
   }
 
   input UserInput {
@@ -30,12 +31,23 @@ const typeDefs = gql`
     email: String!
     age: Int!
     nationality: String
+    isActive: Boolean!
+    friends: [UserInput!]
+    posts: [PostInput!]
+  }
+  input PostInput {
+    title: String!
+    content: String!
   }
 
   type Mutation {
     createUser(input: UserInput!): User!
     updateUser(id: ID!, input: UserInput!): User!
     deleteUser(id: ID!): String!
+    addFriend(userId: ID!, friendId: ID!): User!
+    removeFriend(userId: ID!, friendId: ID!): User!
+    acceptFriendRequest(userId: ID!, friendId: ID!): User!
+    declineFriendRequest(userId: ID!, friendId: ID!): User!
   }
 `;
 

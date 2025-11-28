@@ -1,47 +1,47 @@
-import Users from "../FakeData";
-import type { User } from "../FakeData";
+import {
+  getUser,
+  updateUser,
+  getAllUsers,
+  createUser,
+  deleteUser,
+  addFriend,
+  removeFriend,
+} from "../controllers/UserController";
+
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  age: number;
+  isActive: boolean;
+  nationality: string;
+  friends?: User[];
+}
 
 const resolvers = {
   Query: {
     hello: (): string => "Hello, world!",
     goodBye: (): string => "Goodbye, world!",
-    users: () => Users,
-    getUser: (_: any, args: { id: string }): User | undefined => {
-      return Users.find((user) => user.id === args.id);
+    users: async () => await getAllUsers(),
+    getUser: async (_: any, args: { _id: string }) => {
+      return await getUser(args._id);
     },
   },
   Mutation: {
     createUser: (_: any, args: any) => {
-      const newUser = {
-        id: String(Users.length + 1),
-        ...args.input,
-      };
-      Users.push(newUser);
-      return newUser;
+      return createUser(args.input);
     },
     updateUser: (_: any, args: any) => {
-      const userId = args.id;
-      const userIndex = Users.findIndex((user) => user.id === userId);
-
-      const updatedUser = {
-        ...Users[userIndex],
-        ...args.input,
-      };
-
-      console.log(updatedUser);
-
-      Users[userIndex] = updatedUser;
-
-      return updatedUser;
+      return updateUser(args._id, args.input);
     },
     deleteUser: (_: any, args: any) => {
-      const userID = args.id;
-      const userIndex = Users.findIndex((user) => user.id === userID);
-
-      const updatred = Users.splice(userIndex, 1);
-      console.log(updatred);
-
-      return `User with ID ${userID} has been deleted.`;
+      return deleteUser(args.id);
+    },
+    addFriend(_: any, args: any) {
+      return addFriend(args.userId, args.friendId);
+    },
+    removeFriend(_: any, args: any) {
+      return removeFriend(args.userId, args.friendId);
     },
   },
 };
